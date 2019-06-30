@@ -20,7 +20,7 @@ class GitModel(object):
                 branch_name = "✓ " + branch_name
             else :
                 branch_name = " " + branch_name
-            if branch.tracking_branch() != None:
+            if branch.tracking_branch() is not None:
                 branch_name = branch_name + " -> " + branch.tracking_branch().name
             branch_with_name = [branch_name, branch]
             branches.append(branch_with_name)
