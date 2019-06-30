@@ -1,6 +1,8 @@
 from asciimatics.widgets import Frame, ListBox, Layout, Divider, Text, \
     Button, TextBox, Widget
 from asciimatics.exceptions import NextScene, StopApplication
+from git import GitCommandError
+
 
 class ListView(Frame):
     def __init__(self, screen, model):
@@ -51,7 +53,11 @@ class ListView(Frame):
 
     def __checkout(self):
         self.save()
-        self._model.checkout_branch(self.data["branches"])
+        try:
+            self._model.checkout_branch(self.data["branches"])
+        except GitCommandError as e:
+            self._model.last_error = e
+            raise NextScene("Error")
         self._model.current_id = self.data["branches"]
         self._reload_list()
 
@@ -100,6 +106,42 @@ class BranchView(Frame):
     def _ok(self):
         self.save()
         self._model.update_current_contact(self.data)
+        raise NextScene("Main")
+
+    @staticmethod
+    def _cancel():
+        raise NextScene("Main")
+
+class ExceptionView(Frame):
+    def __init__(self, screen, model):
+        super(ExceptionView, self).__init__(screen,
+                                         screen.height * 2 // 3,
+                                         screen.width * 2 // 3,
+                                         hover_focus=True,
+                                         can_scroll=False,
+                                         title="Error",
+                                         reduce_cpu=True)
+        # Save off the model that accesses the contacts database.
+        self._model = model
+
+        # Create the form for displaying the list of contacts.
+        layout = Layout([100], fill_frame=True)
+        self.add_layout(layout)
+        self._header = TextBox(20, as_string=True)
+        self._header.disabled = True
+        self._header.custom_colour = "label"
+        layout.add_widget(self._header)
+        layout2 = Layout([1, 1, 1, 1])
+        self.add_layout(layout2)
+        layout2.add_widget(Button("OK", self._ok), 0)
+        self.fix()
+
+    def reset(self):
+        # Do standard reset to clear out form, then populate with new data.
+        super(ExceptionView, self).reset()
+        self._header.value = "Error encountered: {0}".format(self._model.last_error)
+
+    def _ok(self):
         raise NextScene("Main")
 
     @staticmethod

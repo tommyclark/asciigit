@@ -7,14 +7,15 @@ import src.views as views
 
 def main(screen, scene):
     scenes = [
-        Scene([views.ListView(screen, contacts)], -1, name="Main"),
-        Scene([views.BranchView(screen, contacts)], -1, name="Edit Branch")
+        Scene([views.ListView(screen, model)], -1, name="Main"),
+        Scene([views.BranchView(screen, model)], -1, name="Edit Branch"),
+        Scene([views.ExceptionView(screen, model)], -1, name="Error")
     ]
 
     screen.play(scenes, stop_on_resize=True, start_scene=scene, allow_int=True)
 
 
-contacts = models.GitModel()
+model = models.GitModel()
 last_scene = None
 while True:
     try:

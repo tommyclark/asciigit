@@ -5,6 +5,7 @@ class GitModel(object):
     def __init__(self):
         # Current branch when editing.
         self.current_id = None
+        self.last_error = None
 
         dir_path = os.getcwd()
         self.repo = Repo(dir_path)
