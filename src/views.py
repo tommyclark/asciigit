@@ -21,8 +21,8 @@ class ListView(Frame):
             name="branches",
             add_scroll_bar=True,
             on_change=self._on_pick,
-            on_select=self._edit)
-        self._edit_button = Button("Edit", self._edit)
+            on_select=self.__checkout)
+        self.__checkout_button = Button("Checkout", self.__checkout)
         self._delete_button = Button("Delete", self._delete)
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
@@ -31,28 +31,29 @@ class ListView(Frame):
         layout2 = Layout([1, 1, 1, 1])
         self.add_layout(layout2)
         layout2.add_widget(Button("Add", self._add), 0)
-        layout2.add_widget(self._edit_button, 1)
+        layout2.add_widget(self.__checkout_button, 1)
         layout2.add_widget(self._delete_button, 2)
         layout2.add_widget(Button("Quit", self._quit), 3)
         self.fix()
         self._on_pick()
 
     def _on_pick(self):
-        self._edit_button.disabled = self._list_view.value is None
+        self.__checkout_button.disabled = self._list_view.value is None
         self._delete_button.disabled = self._list_view.value is None
 
-    def _reload_list(self, new_value=None):
+    def _reload_list(self):
         self._list_view.options = self._model.list_branches()
-        self._list_view.value = new_value
+        self._list_view.value = self._model.get_current_branch()
 
     def _add(self):
         self._model.current_id = None
         raise NextScene("Edit Branch")
 
-    def _edit(self):
+    def __checkout(self):
         self.save()
+        self._model.checkout_branch(self.data["branches"])
         self._model.current_id = self.data["branches"]
-        raise NextScene("Edit Branch")
+        self._reload_list()
 
     def _delete(self):
         self.save()

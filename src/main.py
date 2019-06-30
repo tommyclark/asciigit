@@ -8,7 +8,7 @@ import src.views as views
 def main(screen, scene):
     scenes = [
         Scene([views.ListView(screen, contacts)], -1, name="Main"),
-        Scene([views.BranchView(screen, contacts)], -1, name="Edit Contact")
+        Scene([views.BranchView(screen, contacts)], -1, name="Edit Branch")
     ]
 
     screen.play(scenes, stop_on_resize=True, start_scene=scene, allow_int=True)
