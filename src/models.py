@@ -16,7 +16,11 @@ class GitModel(object):
         for branch in self.branches:
             branch_name = branch.name
             if self.is_current_branch(branch):
-                branch_name = branch_name + " ✓"
+                branch_name = "✓ " + branch_name
+            else :
+                branch_name = " " + branch_name
+            if branch.tracking_branch() != None:
+                branch_name = branch_name + " -> " + branch.tracking_branch().name
             branch_with_name = [branch_name, branch]
             branches.append(branch_with_name)
         return branches
@@ -34,4 +38,6 @@ class GitModel(object):
             return self.get_contact(self.current_id)
 
     def checkout_branch(self, branch_name):
+        # self.repo.git.stash()
         self.repo.git.checkout(branch_name)
+        # self.repo.git.stash('pop')
