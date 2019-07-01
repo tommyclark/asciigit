@@ -7,7 +7,8 @@ setup (
     packages=['src'],
     install_requires=[
         'asciimatics',
-        'GitPython'
+        'GitPython',
+        'pydriller'
     ],
     entry_points = {
         "console_scripts": [        # command-line executables to expose

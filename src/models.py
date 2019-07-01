@@ -1,7 +1,8 @@
 import os
 from git import Repo
+from pydriller import RepositoryMining
 
-class GitModel(object):
+class GitBranchModel(object):
     def __init__(self):
         # Current branch when editing.
         self.current_id = None
@@ -42,3 +43,21 @@ class GitModel(object):
         # self.repo.git.stash()
         self.repo.git.checkout(branch_name)
         # self.repo.git.stash('pop')
+
+class GitCommitModel(object):
+    def __init__(self):
+        # Current branch when editing.
+        self.current_id = None
+        self.last_error = None
+
+        self.dir_path = os.getcwd()
+        self.repo = Repo(self.dir_path)
+        assert not self.repo.bare
+
+    def list_commits(self):
+        commitsWithInfo = []
+        for commit in RepositoryMining(self.dir_path).traverse_commits():
+            commitInfo = [commit.hash, commit.msg, commit.author.name, commit.author_date.strftime("%d/%m/%Y, %H:%M:%S")]
+            commitInfoWithHashAsKey = [commitInfo, commit.hash]
+            commitsWithInfo.append(commitInfoWithHashAsKey)
+        return commitsWithInfo
