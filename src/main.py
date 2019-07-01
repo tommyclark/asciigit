@@ -1,5 +1,3 @@
-import curses
-
 from asciimatics.event import KeyboardEvent
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen

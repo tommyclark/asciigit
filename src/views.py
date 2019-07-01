@@ -3,12 +3,11 @@ from asciimatics.widgets import Frame, ListBox, Layout, Divider, Text, \
 from asciimatics.exceptions import NextScene, StopApplication
 from git import GitCommandError
 
-
 class BranchListView(Frame):
     def __init__(self, screen, model):
         super(BranchListView, self).__init__(screen,
-                                             screen.height * 2 // 3,
-                                             screen.width * 2 // 3,
+                                             screen.height * 9 // 10,
+                                             screen.width * 9 // 10,
                                              on_load=self._reload_list,
                                              hover_focus=True,
                                              can_scroll=False,
@@ -73,8 +72,8 @@ class BranchListView(Frame):
 class CommitView(Frame):
     def __init__(self, screen, model):
         super(CommitView, self).__init__(screen,
-                                         screen.height * 2 // 3,
-                                         screen.width * 2 // 3,
+                                         screen.height * 9 // 10,
+                                         screen.width * 9 // 10,
                                          on_load=self._reload_list,
                                          hover_focus=True,
                                          can_scroll=False,
@@ -141,8 +140,8 @@ class CommitView(Frame):
 class BranchView(Frame):
     def __init__(self, screen, model):
         super(BranchView, self).__init__(screen,
-                                         screen.height * 2 // 3,
-                                         screen.width * 2 // 3,
+                                         screen.height * 9 // 10,
+                                         screen.width * 9 // 10,
                                          hover_focus=True,
                                          can_scroll=False,
                                          title="Branch Details",
@@ -182,12 +181,12 @@ class BranchView(Frame):
 class ExceptionView(Frame):
     def __init__(self, screen, model):
         super(ExceptionView, self).__init__(screen,
-                                         screen.height * 2 // 3,
-                                         screen.width * 2 // 3,
-                                         hover_focus=True,
-                                         can_scroll=False,
-                                         title="Error",
-                                         reduce_cpu=True)
+                                            screen.height * 9 // 10,
+                                            screen.width * 9 // 10,
+                                            hover_focus=True,
+                                            can_scroll=False,
+                                            title="Error",
+                                            reduce_cpu=True)
         self._model = model
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
