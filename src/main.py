@@ -6,6 +6,7 @@ import sys
 import src.models as models
 import src.views as views
 
+
 # Event handler for global keys
 def global_shortcuts(event):
     if isinstance(event, KeyboardEvent):
@@ -14,12 +15,18 @@ def global_shortcuts(event):
             raise NextScene("Main")
         elif key == Screen.KEY_F2:
             raise NextScene("Commits")
+        elif key == 115:  # S
+            raise NextScene("Shortcuts")
+        elif key in (17, 24):  # Quit on ctrl-x
+            raise StopApplication("User terminated app")
+
 
 def main(screen, scene):
     scenes = [
         Scene([views.BranchListView(screen, branch_model)], -1, name="Main"),
         Scene([views.BranchView(screen, branch_model)], -1, name="Edit Branch"),
         Scene([views.CommitView(screen, commit_model)], -1, name="Commits"),
+        Scene([views.ShortcutsView(screen)], -1, name="Shortcuts"),
         Scene([views.ExceptionView(screen, branch_model)], -1, name="Error")
     ]
 
