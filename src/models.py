@@ -20,7 +20,7 @@ class GitBranchModel(object):
             branch_name = branch.name
             if self.is_current_branch(branch):
                 branch_name = "✓ " + branch_name
-            else :
+            else:
                 branch_name = " " + branch_name
             if branch.tracking_branch() is not None:
                 branch_name = branch_name + " -> " + branch.tracking_branch().name
@@ -59,7 +59,49 @@ class GitCommitModel(object):
     def list_commits(self):
         _commits_with_info = []
         for commit in RepositoryMining(self.dir_path).traverse_commits():
-            _commit_info = [commit.hash, commit.msg, commit.author.name, commit.author_date.strftime("%d/%m/%Y, %H:%M:%S")]
+            _commit_info = [commit.hash, commit.msg, commit.author.name,
+                            commit.author_date.strftime("%d/%m/%Y, %H:%M:%S")]
             _commit_info_with_hash_as_key = [_commit_info, commit.hash]
             _commits_with_info.append(_commit_info_with_hash_as_key)
         return _commits_with_info
+
+
+class WorkingCopyModel(object):
+    def __init__(self):
+        # Current branch when editing.
+        self.current_id = None
+        self.last_error = None
+
+        self.dir_path = os.getcwd()
+        self.repo = Repo(self.dir_path)
+        assert not self.repo.bare
+
+    def list_of_changed_files(self):
+        return self.repo.head.commit.diff(None)
+
+    def list_of_changed_unadded_files(self):
+        return self.repo.index.diff(None)
+
+    def list_of_changed_files_in_index(self):
+        return [item for item in self.list_of_changed_files() if item not in self.list_of_changed_unadded_files()]
+
+    def changed_files_for_table(self):
+        changed_files = []
+        # TODO: Have to deal with b_path = None for deleted files.
+        for file in self.list_of_changed_files_in_index():
+            _file_name_with_diff = ["✓ " + file.b_path, file.b_path]
+            changed_files.append(_file_name_with_diff)
+        for file in self.list_of_changed_unadded_files():
+            _file_name_with_diff = ["  " + file.b_path, file.b_path]
+            changed_files.append(_file_name_with_diff)
+        return changed_files
+
+    def toggle_add_file_to_index(self, path):
+        added = [item.a_path for item in self.repo.index.diff('HEAD')]
+        if path in added:
+            self.repo.git.reset(path)
+        else:
+            self.repo.git.add(path)
+
+    def commit(self, commit_message):
+        self.repo.git.commit('-m "{}"'.format(commit_message))
