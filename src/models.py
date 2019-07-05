@@ -112,4 +112,4 @@ class WorkingCopyModel(GitModel):
             self.repo.git.add(path)
 
     def commit(self, commit_message):
-        self.repo.git.commit('-m "{}"'.format(commit_message))
+        self.repo.git.commit('-m {}'.format(commit_message))

@@ -221,7 +221,7 @@ class WorkingCopyView(View):
         self._reload_list()
 
     def _commit(self):
-        # self._model.commit(self.commit_message.value)
+        self._model.commit(self.commit_message.value)
         self.reset()
 
     def reset(self):
