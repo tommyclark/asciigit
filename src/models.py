@@ -3,18 +3,30 @@ from git import Repo
 from pydriller import RepositoryMining
 
 
-class GitBranchModel(object):
+class GitModel(object):
+    """
+    Parent class for all Git models.
+    """
     def __init__(self):
         # Current branch when editing.
         self.current_id = None
         self.last_error = None
 
-        dir_path = os.getcwd()
-        self.repo = Repo(dir_path)
+        self.dir_path = os.getcwd()
+        self.repo = Repo(self.dir_path)
         self.branches = self.repo.branches
         assert not self.repo.bare
 
+
+class GitBranchModel(GitModel):
+    """
+    Model for listing and manipulating Git branches.
+    """
     def list_branches(self):
+        """
+        Lists branches for Branches table. Prepends the current branch with a tick.
+        :return: A list of branch_name, branch tuples.
+        """
         branches = []
         for branch in self.branches:
             branch_name = branch.name
@@ -46,17 +58,15 @@ class GitBranchModel(object):
         # self.repo.git.stash('pop')
 
 
-class GitCommitModel(object):
-    def __init__(self):
-        # Current branch when editing.
-        self.current_id = None
-        self.last_error = None
-
-        self.dir_path = os.getcwd()
-        self.repo = Repo(self.dir_path)
-        assert not self.repo.bare
-
+class GitCommitModel(GitModel):
+    """
+    A model for listing and manipulating git commits.
+    """
     def list_commits(self):
+        """
+        Lists commits for the current branch for the commits table.
+        :return: An array of arrays with commit information inside.
+        """
         _commits_with_info = []
         for commit in RepositoryMining(self.dir_path).traverse_commits():
             _commit_info = [commit.hash, commit.msg, commit.author.name,
@@ -66,16 +76,10 @@ class GitCommitModel(object):
         return _commits_with_info
 
 
-class WorkingCopyModel(object):
-    def __init__(self):
-        # Current branch when editing.
-        self.current_id = None
-        self.last_error = None
-
-        self.dir_path = os.getcwd()
-        self.repo = Repo(self.dir_path)
-        assert not self.repo.bare
-
+class WorkingCopyModel(GitModel):
+    """
+    A model for viewing working copy file changes.
+    """
     def list_of_changed_files(self):
         return self.repo.head.commit.diff(None)
 
@@ -86,6 +90,10 @@ class WorkingCopyModel(object):
         return [item for item in self.list_of_changed_files() if item not in self.list_of_changed_unadded_files()]
 
     def changed_files_for_table(self):
+        """
+        Lists changed files in the working copy. Prepends files added to the index with a tick.
+        :return: A list of formatted_file_path, file_path tuples representing changed working copy files.
+        """
         changed_files = []
         # TODO: Have to deal with b_path = None for deleted files.
         for file in self.list_of_changed_files_in_index():

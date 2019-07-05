@@ -35,10 +35,14 @@ class View(Frame):
         _header.disabled = True
         _header_blank.disabled = True
         _header.custom_colour = "label"
-        _header.value = "Press S to see a list of shortcuts. Ctrl-X to quit."
+        _header.value = "Press ctrl-a to see a list of shortcuts. Press ctrl-x to quit."
         self.add_layout(layout0)
         layout0.add_widget(_header_blank, 0)
         layout0.add_widget(_header, 0)
+
+    @staticmethod
+    def _quit():
+        raise StopApplication("User pressed quit")
 
 
 class BranchListView(View):
@@ -107,10 +111,6 @@ class BranchListView(View):
         self._model.delete_contact(self.data["branches"])
         self._reload_list()
 
-    @staticmethod
-    def _quit():
-        raise StopApplication("User pressed quit")
-
 
 class CommitView(View):
     def __init__(self, screen, model):
@@ -177,52 +177,68 @@ class CommitView(View):
         self.save()
         self._reload_list()
 
-    @staticmethod
-    def _quit():
-        raise StopApplication("User pressed quit")
 
-
-class BranchView(View):
+class WorkingCopyView(View):
     def __init__(self, screen, model):
-        super(BranchView, self).__init__(model,
+        super(WorkingCopyView, self).__init__(model,
                                          screen,
                                          screen.height * 9 // 10,
                                          screen.width * 9 // 10,
+                                         on_load=self._reload_list,
                                          hover_focus=True,
                                          can_scroll=False,
-                                         title="Branch Details",
-                                         reduce_cpu=True)
+                                         title="Working copy")
         # Save off the model that accesses the contacts database.
         self._model = model
-
+        screen.catch_interrupt = True
         # Create the form for displaying the list of contacts.
+        self._list_view = ListBox(
+            Widget.FILL_FRAME,
+            model.changed_files_for_table(),
+            name="working_copy",
+            add_scroll_bar=True,
+            on_select=self._add_to_index)
+
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
-        layout.add_widget(Text("Name:", "name"))
-        layout.add_widget(Text("Address:", "address"))
-        layout.add_widget(Text("Phone number:", "phone"))
-        layout.add_widget(Text("Email address:", "email"))
-        layout.add_widget(TextBox(
-            Widget.FILL_FRAME, "Notes:", "notes", as_string=True, line_wrap=True))
-        layout2 = Layout([1, 1, 1, 1])
+        layout.add_widget(self._list_view)
+        layout.add_widget(Divider())
+
+        self._commit_button = Button("Commit", self._commit)
+        layout2 = Layout([8, 2])
         self.add_layout(layout2)
-        layout2.add_widget(Button("OK", self._ok), 0)
-        layout2.add_widget(Button("Cancel", self._cancel), 3)
+
+        self.commit_message = Text("Commit message:", "commit_message")
+        layout2.add_widget(self.commit_message, 0)
+        layout2.add_widget(self._commit_button, 1)
+
+        self.add_shortcut_panel()
         self.fix()
+
+    def _add_to_index(self):
+        self.save()
+        self._model.toggle_add_file_to_index(self.data["working_copy"])
+        self._reload_list()
+
+    def _commit(self):
+        # self._model.commit(self.commit_message.value)
+        self.reset()
 
     def reset(self):
         # Do standard reset to clear out form, then populate with new data.
-        super(BranchView, self).reset()
-        self.data = self._model.get_current_contact()
+        super(WorkingCopyView, self).reset()
+        self._reload_list()
 
-    def _ok(self):
+    def _reload_list(self):
+        self._list_view.options = self._model.changed_files_for_table()
+
+    def _add(self):
+        self._model.current_id = None
+        raise NextScene("Edit Branch")
+
+    def _delete(self):
         self.save()
-        self._model.update_current_contact(self.data)
-        raise NextScene("Main")
-
-    @staticmethod
-    def _cancel():
-        raise NextScene("Main")
+        self._reload_list()
 
 
 class ExceptionView(View):

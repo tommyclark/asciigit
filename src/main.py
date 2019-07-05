@@ -15,17 +15,19 @@ def global_shortcuts(event):
             raise NextScene("Main")
         elif key == Screen.KEY_F2:
             raise NextScene("Commits")
-        elif key == 115:  # S
+        elif key == Screen.KEY_F3:
+            raise NextScene("Working Copy")
+        elif key == Screen.ctrl("a"):
             raise NextScene("Shortcuts")
-        elif key in (17, 24):  # Quit on ctrl-x
+        elif key == Screen.ctrl("x"):
             raise StopApplication("User terminated app")
 
 
 def main(screen, scene):
     scenes = [
         Scene([views.BranchListView(screen, branch_model)], -1, name="Main"),
-        Scene([views.BranchView(screen, branch_model)], -1, name="Edit Branch"),
         Scene([views.CommitView(screen, commit_model)], -1, name="Commits"),
+        Scene([views.WorkingCopyView(screen, working_copy_model)], -1, name="Working Copy"),
         Scene([views.ShortcutsView(screen)], -1, name="Shortcuts"),
         Scene([views.ExceptionView(screen, branch_model)], -1, name="Error")
     ]
@@ -35,6 +37,7 @@ def main(screen, scene):
 
 branch_model = models.GitBranchModel()
 commit_model = models.GitCommitModel()
+working_copy_model = models.WorkingCopyModel()
 last_scene = None
 while True:
     try:
