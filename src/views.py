@@ -283,7 +283,7 @@ class ShortcutsView(Frame):
                                             screen.width * 6 // 10,
                                             hover_focus=True,
                                             can_scroll=False,
-                                            title="Error",
+                                            title="Shortcuts",
                                             reduce_cpu=True)
         self.set_theme("tlj256")
 
@@ -291,18 +291,17 @@ class ShortcutsView(Frame):
         self.add_layout(layout)
         self._row0 = TextBox(20, as_string=True)
         self._row0.disabled = True
-        self._row0.custom_colour = "label"
         self._row0.value = "F1 - See branch window\n" \
-                           "S - See shortcuts window"
+                           "Ctrl-A - See shortcuts window"
         layout.add_widget(self._row0, 0)
         self._row1 = TextBox(20, as_string=True)
         self._row1.disabled = True
-        self._row1.custom_colour = "label"
-        self._row1.value = "F2 - See commit window"
+        self._row1.value = "F2 - See commit list window\n" \
+                           "F3 - See working copy and commit window"
         layout.add_widget(self._row1, 1)
-        layout2 = Layout([1, 1, 1, 1])
+        layout2 = Layout([1, 1])
         self.add_layout(layout2)
-        layout2.add_widget(Button("OK", self._ok), 0)
+        layout2.add_widget(Button("Okay", self._ok), 1)
         self.fix()
 
     def reset(self):
