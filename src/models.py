@@ -59,6 +59,10 @@ class GitBranchModel(GitModel):
 
 
 class GitCommitModel(GitModel):
+    def __init__(self):
+        super(GitCommitModel, self).__init__()
+        self.repository_miner = RepositoryMining(self.dir_path)
+
     """
     A model for listing and manipulating git commits.
     """
@@ -68,7 +72,7 @@ class GitCommitModel(GitModel):
         :return: An array of arrays with commit information inside.
         """
         _commits_with_info = []
-        for commit in RepositoryMining(self.dir_path).traverse_commits():
+        for commit in self.repository_miner.traverse_commits():
             _commit_info = [commit.hash, commit.msg, commit.author.name,
                             commit.author_date.strftime("%d/%m/%Y, %H:%M:%S")]
             _commit_info_with_hash_as_key = [_commit_info, commit.hash]
@@ -87,7 +91,7 @@ class WorkingCopyModel(GitModel):
         return self.repo.index.diff(None)
 
     def list_of_changed_files_in_index(self):
-        return [item for item in self.list_of_changed_files() if item not in self.list_of_changed_unadded_files()]
+        return self.repo.index.diff('HEAD')
 
     def changed_files_for_table(self):
         """
@@ -95,19 +99,21 @@ class WorkingCopyModel(GitModel):
         :return: A list of formatted_file_path, file_path tuples representing changed working copy files.
         """
         changed_files = []
-        # TODO: Have to deal with b_path = None for deleted files.
         for file in self.list_of_changed_files_in_index():
             _file_name_with_diff = ["✓ " + file.b_path, file.b_path]
             changed_files.append(_file_name_with_diff)
         for file in self.list_of_changed_unadded_files():
             _file_name_with_diff = ["  " + file.b_path, file.b_path]
             changed_files.append(_file_name_with_diff)
+        for file in self.repo.untracked_files:
+            _file_name_with_diff = ["  " + file, file]
+            changed_files.append(_file_name_with_diff)
         return changed_files
 
     def toggle_add_file_to_index(self, path):
-        added = [item.a_path for item in self.repo.index.diff('HEAD')]
+        added = [item.a_path for item in self.list_of_changed_files_in_index()]
         if path in added:
-            self.repo.git.reset(path)
+            self.repo.git.reset("--", path)
         else:
             self.repo.git.add(path)
 
