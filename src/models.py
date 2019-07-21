@@ -73,7 +73,7 @@ class GitCommitModel(GitModel):
         """
         _commits_with_info = []
         for commit in self.repository_miner.traverse_commits():
-            _commit_info = [commit.hash, commit.msg, commit.author.name,
+            _commit_info = [commit.hash[:12], commit.msg, commit.author.name,
                             commit.author_date.strftime("%d/%m/%Y, %H:%M:%S")]
             _commit_info_with_hash_as_key = [_commit_info, commit.hash]
             _commits_with_info.append(_commit_info_with_hash_as_key)
