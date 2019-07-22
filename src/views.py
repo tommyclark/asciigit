@@ -25,20 +25,42 @@ class View(Frame):
                                    is_modal=is_modal,
                                    can_scroll=can_scroll)
         self._model = model
+        self.nav_header = None
         self.set_theme("tlj256")
+
+    def add_navigation_header(self):
+        self.nav_header = Layout([1, 1, 1, 1])
+        self.add_layout(self.nav_header)
+        self.nav_header.add_widget(Button("Branches", self._open_branch_view), 0)
+        self.nav_header.add_widget(Button("History", self._open_commits_view), 1)
+        self.nav_header.add_widget(Button("Commit", self._open_working_copy_view), 2)
+        self.nav_header.add_widget(Button("Quit", self._quit), 3)
+
+    def add_divider(self):
+        divider_layout = Layout([100])
+        self.add_layout(divider_layout)
+        divider_layout.add_widget(Divider())
 
     def add_shortcut_panel(self):
         layout0 = Layout([100])
-        _header_blank = TextBox(2, as_string=True)
-        _header_blank.value = ""
         _header = TextBox(1, as_string=True)
         _header.disabled = True
-        _header_blank.disabled = True
         _header.custom_colour = "label"
         _header.value = "Press ctrl-a to see a list of shortcuts. Press ctrl-x to quit."
         self.add_layout(layout0)
-        layout0.add_widget(_header_blank, 0)
         layout0.add_widget(_header, 0)
+
+    @staticmethod
+    def _open_branch_view():
+        raise NextScene("Main")
+
+    @staticmethod
+    def _open_commits_view():
+        raise NextScene("Commits")
+
+    @staticmethod
+    def _open_working_copy_view():
+        raise NextScene("Working Copy")
 
     @staticmethod
     def _quit():
@@ -55,46 +77,32 @@ class BranchListView(View):
                                              hover_focus=True,
                                              can_scroll=False,
                                              title="Branches")
-        # Save off the model that accesses the contacts database.
         self._model = model
 
-        # Create the form for displaying the list of contacts.
+        # Create the form for displaying the list of branches.
         self._list_view = ListBox(
             Widget.FILL_FRAME,
             model.list_branches(),
             name="branches",
             add_scroll_bar=True,
-            on_change=self._on_pick,
             on_select=self.__checkout)
-        self.__checkout_button = Button("Checkout", self.__checkout)
-        self._delete_button = Button("Delete", self._delete)
 
-        layout = Layout([100], fill_frame=True)
-        self.add_layout(layout)
-        layout.add_widget(self._list_view)
-        layout.add_widget(Divider())
-        layout2 = Layout([1, 1, 1, 1])
-        self.add_layout(layout2)
-        layout2.add_widget(Button("Add", self._add), 0)
-        layout2.add_widget(self.__checkout_button, 1)
-        layout2.add_widget(self._delete_button, 2)
-        layout2.add_widget(Button("Quit", self._quit), 3)
+        self.add_navigation_header()
+        self.add_divider()
+
+        self.table_layout = Layout([100], fill_frame=True)
+        self.add_layout(self.table_layout)
+        self.table_layout.add_widget(self._list_view)
+        self.table_layout.add_widget(Divider())
 
         self.add_shortcut_panel()
         self.fix()
-        self._on_pick()
-
-    def _on_pick(self):
-        self.__checkout_button.disabled = self._list_view.value is None
-        self._delete_button.disabled = self._list_view.value is None
 
     def _reload_list(self):
+        self.nav_header.blur()
+        self.table_layout.focus()
         self._list_view.options = self._model.list_branches()
         self._list_view.value = self._model.get_current_branch()
-
-    def _add(self):
-        self._model.current_id = None
-        raise NextScene("Edit Branch")
 
     def __checkout(self):
         self.save()
@@ -104,11 +112,6 @@ class BranchListView(View):
             self._model.last_error = e
             raise NextScene("Error")
         self._model.current_id = self.data["branches"]
-        self._reload_list()
-
-    def _delete(self):
-        self.save()
-        self._model.delete_contact(self.data["branches"])
         self._reload_list()
 
 
@@ -122,76 +125,46 @@ class CommitView(View):
                                          hover_focus=True,
                                          can_scroll=False,
                                          title="Commits")
-        # Save off the model that accesses the contacts database.
         self._model = model
 
-        # Create the form for displaying the list of contacts.
         self._list_view = MultiColumnListBox(
             Widget.FILL_FRAME,
             ["10%", "60%", "15%", "15%"],
             model.list_commits(),
             titles=["Hash", "Message", "Author", "Date"],
             name="commits",
-            add_scroll_bar=True,
-            on_change=self._on_pick,
-            on_select=self.__checkout)
-        self.__checkout_button = Button("Checkout", self.__checkout)
-        self._delete_button = Button("Delete", self._delete)
-        layout = Layout([100], fill_frame=True)
-        self.add_layout(layout)
-        layout.add_widget(self._list_view)
-        layout.add_widget(Divider())
-        layout2 = Layout([1, 1, 1, 1])
-        self.add_layout(layout2)
-        layout2.add_widget(Button("Add", self._add), 0)
-        layout2.add_widget(self.__checkout_button, 1)
-        layout2.add_widget(self._delete_button, 2)
-        layout2.add_widget(Button("Quit", self._quit), 3)
+            add_scroll_bar=True)
+
+        self.add_navigation_header()
+        self.add_divider()
+
+        self.table_layout = Layout([100], fill_frame=True)
+        self.add_layout(self.table_layout)
+        self.table_layout.add_widget(self._list_view)
+        self.table_layout.add_widget(Divider())
+
         self.add_shortcut_panel()
         self.fix()
-        self._on_pick()
-
-    def _on_pick(self):
-        self.__checkout_button.disabled = self._list_view.value is None
-        self._delete_button.disabled = self._list_view.value is None
 
     def _reload_list(self):
         self._list_view.options = self._model.list_commits()
-        # self._list_view.value = self._model.get_current_branch()
-
-    def _add(self):
-        self._model.current_id = None
-        raise NextScene("Edit Branch")
-
-    def __checkout(self):
-        self.save()
-        # try:
-        #     self._model.checkout_branch(self.data["branches"])
-        # except GitCommandError as e:
-        #     self._model.last_error = e
-        #     raise NextScene("Error")
-        # self._model.current_id = self.data["branches"]
-        self._reload_list()
-
-    def _delete(self):
-        self.save()
-        self._reload_list()
+        self.nav_header.blur()
+        self.table_layout.focus()
 
 
 class WorkingCopyView(View):
     def __init__(self, screen, model):
         super(WorkingCopyView, self).__init__(model,
-                                         screen,
-                                         screen.height * 9 // 10,
-                                         screen.width * 9 // 10,
-                                         on_load=self._reload_list,
-                                         hover_focus=True,
-                                         can_scroll=False,
-                                         title="Working copy")
-        # Save off the model that accesses the contacts database.
+                                              screen,
+                                              screen.height * 9 // 10,
+                                              screen.width * 9 // 10,
+                                              on_load=self._reload_list,
+                                              hover_focus=True,
+                                              can_scroll=False,
+                                              title="Working copy")
         self._model = model
         screen.catch_interrupt = True
-        # Create the form for displaying the list of contacts.
+
         self._list_view = ListBox(
             Widget.FILL_FRAME,
             model.changed_files_for_table(),
@@ -199,10 +172,13 @@ class WorkingCopyView(View):
             add_scroll_bar=True,
             on_select=self._add_to_index)
 
-        layout = Layout([100], fill_frame=True)
-        self.add_layout(layout)
-        layout.add_widget(self._list_view)
-        layout.add_widget(Divider())
+        self.add_navigation_header()
+        self.add_divider()
+
+        self.table_layout = Layout([100], fill_frame=True)
+        self.add_layout(self.table_layout)
+        self.table_layout.add_widget(self._list_view)
+        self.table_layout.add_widget(Divider())
 
         self._commit_button = Button("Commit", self._commit)
         layout2 = Layout([8, 2])
@@ -211,6 +187,8 @@ class WorkingCopyView(View):
         self.commit_message = Text("Commit message:", "commit_message")
         layout2.add_widget(self.commit_message, 0)
         layout2.add_widget(self._commit_button, 1)
+
+        self.add_divider()
 
         self.add_shortcut_panel()
         self.fix()
@@ -231,14 +209,8 @@ class WorkingCopyView(View):
 
     def _reload_list(self):
         self._list_view.options = self._model.changed_files_for_table()
-
-    def _add(self):
-        self._model.current_id = None
-        raise NextScene("Edit Branch")
-
-    def _delete(self):
-        self.save()
-        self._reload_list()
+        self.nav_header.blur()
+        self.table_layout.focus()
 
 
 class ExceptionView(View):
