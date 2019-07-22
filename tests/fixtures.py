@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from git import Repo, Head, Diff, Commit, IndexFile
+from git import Repo, Head, Diff, Commit, IndexFile, Remote
 from pydriller import RepositoryMining
 from pydriller.domain.developer import Developer
 
@@ -159,11 +159,19 @@ class MockIndex(IndexFile):
             return [diff1, diff2, diff3]
 
 
+class MockRemote:
+    def __init__(self):
+        self.pushed = False
+
+    def push(self, refspec=None, progress=None, **kwargs):
+        self.pushed = True
+
+
 class MockRepository(Repo):
     heads = [MockCurrentHead(), MockAlternateHead(), MockNonTrackingHead()]
     active_branch = heads[0]
     head = heads[0]
-    index = MockIndex()
+    index = MockIndex
     git = None
     # alias for heads
     branches = heads
@@ -171,6 +179,10 @@ class MockRepository(Repo):
 
     def __init__(self):
         self.git = MockGit(self)
+        self.mock_remote = MockRemote()
+
+    def remote(self, name='origin'):
+        return self.mock_remote
 
 
 class MockRepositoryMiner(RepositoryMining):

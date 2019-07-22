@@ -119,3 +119,7 @@ class WorkingCopyModel(GitModel):
 
     def commit(self, commit_message):
         self.repo.git.commit('-m {}'.format(commit_message))
+
+    def push(self):
+        origin = self.repo.remote(name='origin')
+        origin.push()

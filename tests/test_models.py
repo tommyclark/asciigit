@@ -111,3 +111,7 @@ class TestWorkingCopyModel(unittest.TestCase):
     def testCommit(self):
         self.working_copy_model.commit("Hello there")
         assert self.working_copy_model.repo.git.message == "-m Hello there"
+
+    def testPush(self):
+        self.working_copy_model.push()
+        assert self.working_copy_model.repo.remote("origin").pushed

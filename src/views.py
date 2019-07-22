@@ -181,12 +181,15 @@ class WorkingCopyView(View):
         self.table_layout.add_widget(Divider())
 
         self._commit_button = Button("Commit", self._commit)
-        layout2 = Layout([8, 2])
+        self._push_button = Button("Push", self._push)
+
+        layout2 = Layout([8, 1, 1])
         self.add_layout(layout2)
 
         self.commit_message = Text("Commit message:", "commit_message")
         layout2.add_widget(self.commit_message, 0)
         layout2.add_widget(self._commit_button, 1)
+        layout2.add_widget(self._push_button, 2)
 
         self.add_divider()
 
@@ -200,6 +203,10 @@ class WorkingCopyView(View):
 
     def _commit(self):
         self._model.commit(self.commit_message.value)
+        self.reset()
+
+    def _push(self):
+        self._model.push()
         self.reset()
 
     def reset(self):
