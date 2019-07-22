@@ -147,7 +147,8 @@ class MockIndex(IndexFile):
     def __init__(self):
         pass
 
-    def diff(self, other=None, paths=None, create_patch=False, **kwargs):
+    @staticmethod
+    def diff(other=None, paths=None, create_patch=False, **kwargs):
         if other is None:
             diff4 = MockDiff("unadded_4")
             diff5 = MockDiff("unadded_5")
