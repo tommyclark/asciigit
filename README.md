@@ -4,8 +4,9 @@
     /  _  \__ \ (__| | | (_| | | |_ 
     \_/ \_/___/\___|_|_|\__, |_|\__|
                         |___/       
-                        
+          
 # Asciigit
+[![Build Status](https://travis-ci.com/tommyclark/asciigit.svg?token=YfxAsFSSF6uMWM3sNFjo&branch=master)](https://travis-ci.com/tommyclark/asciigit)              
 
 Asciigit is a terminal UI for [Git](https://git-scm.com). The aim of this project is to make it easier
 for you to interact with your Git repositories in the terminal, either
