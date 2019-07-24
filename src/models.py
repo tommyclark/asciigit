@@ -32,9 +32,9 @@ class GitBranchModel(GitModel):
         for branch in self.branches:
             branch_name = branch.name
             if self.is_current_branch(branch):
-                branch_name = "✓ " + branch_name
+                branch_name = "✔ " + branch_name
             else:
-                branch_name = " " + branch_name
+                branch_name = "  " + branch_name
             if branch.tracking_branch() is not None:
                 branch_name = branch_name + " -> " + branch.tracking_branch().name
             branch_with_name = [branch_name, branch]
@@ -101,7 +101,7 @@ class WorkingCopyModel(GitModel):
         """
         changed_files = []
         for file in self.list_of_changed_files_in_index():
-            _file_name_with_diff = ["✓ " + file.b_path, file.b_path]
+            _file_name_with_diff = ["✔ " + file.b_path, file.b_path]
             changed_files.append(_file_name_with_diff)
         for file in self.list_of_changed_unadded_files():
             _file_name_with_diff = ["  " + file.b_path, file.b_path]
