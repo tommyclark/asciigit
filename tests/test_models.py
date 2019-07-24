@@ -1,7 +1,7 @@
+# coding: utf-8
 import unittest
 from src.models import GitBranchModel, GitCommitModel, WorkingCopyModel
 from tests.fixtures import *
-
 
 class TestGitBranchModel(unittest.TestCase):
     def setUp(self):

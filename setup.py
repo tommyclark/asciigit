@@ -2,8 +2,8 @@ import sys
 from setuptools import setup, find_packages
 
 setup (
-    name = "asciigit",        # what you want to call the archive/egg
-    version = "0.1",
+    name="asciigit",
+    version="0.1",
     packages=find_packages(),
     tests_require=['mock'],
     install_requires=[
@@ -11,8 +11,8 @@ setup (
         'GitPython',
         'pydriller'
     ],
-    entry_points = {
-        "console_scripts": [        # command-line executables to expose
+    entry_points={
+        "console_scripts": [
             "asciigit = src.main:main",
         ],
     }

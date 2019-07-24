@@ -1,3 +1,4 @@
+# coding: utf-8
 import os
 from git import Repo
 from pydriller import RepositoryMining

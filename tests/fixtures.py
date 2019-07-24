@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from git import Repo, Head, Diff, Commit, IndexFile, Remote
+from git import Repo, Head, Diff, Commit, IndexFile
 from pydriller import RepositoryMining
 from pydriller.domain.developer import Developer
 
