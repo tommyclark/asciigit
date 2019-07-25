@@ -1,16 +1,15 @@
 from setuptools import setup, find_packages
 
-# read the contents of the README file for PyPI
-from os import path
-this_directory = path.abspath(path.dirname(__file__))
-with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
 setup (
     name="asciigit",
+    description="A command line ASCII Git GUI",
     long_description=long_description,
     long_description_content_type='text/markdown',
-    version="0.0.2",
+    url="https://github.com/tommyclark/asciigit",
+    version="0.0.3",
     packages=find_packages(),
     tests_require=['mock'],
     install_requires=[
