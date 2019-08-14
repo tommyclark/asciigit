@@ -44,11 +44,11 @@ class TestCommitModel(unittest.TestCase):
         commits = self.commit_model.list_commits()
         assert commits is not None
 
-        commit_info1 = [['hash1', 'msg1', 'name1', '03/03/1999, 00:00:00'], "hash1"]
-        commit_info2 = [['hash2', 'msg2', 'name2', '03/03/1999, 00:00:00'], "hash2"]
-        commit_info3 = [['hash3', 'msg3', 'name3', '03/03/1999, 00:00:00'], "hash3"]
-        commit_info4 = [['hash4', 'msg4', 'name4', '03/03/1999, 00:00:00'], "hash4"]
-        commit_with_info_list = [commit_info1, commit_info2, commit_info3, commit_info4]
+        commit_info1 = [['hash1', 'msg1', 'name1', '03/03/1999, 00:00:00'], commits[3][1]]
+        commit_info2 = [['hash2', 'msg2', 'name2', '03/03/1999, 00:00:00'], commits[2][1]]
+        commit_info3 = [['hash3', 'msg3', 'name3', '03/03/1999, 00:00:00'], commits[1][1]]
+        commit_info4 = [['hash4', 'msg4', 'name4', '03/03/1999, 00:00:00'], commits[0][1]]
+        commit_with_info_list = [commit_info4, commit_info3, commit_info2, commit_info1]
 
         assert commits == commit_with_info_list
 
