@@ -133,7 +133,8 @@ class CommitView(View):
             model.list_commits(),
             titles=["Hash", "Message", "Author", "Date"],
             name="commits",
-            add_scroll_bar=True)
+            add_scroll_bar=True,
+            on_select=self.__view_diff)
 
         self.add_navigation_header()
         self.add_divider()
@@ -146,10 +147,98 @@ class CommitView(View):
         self.add_shortcut_panel()
         self.fix()
 
+    def __view_diff(self):
+        self.save()
+        self._model.current_commit = self.data["commits"]
+        self.__open_commit_details_scene()
+
+    @staticmethod
+    def __open_commit_details_scene():
+        raise NextScene("View Commit Details")
+
     def _reload_list(self):
         self._list_view.options = self._model.list_commits()
         self.nav_header.blur()
         self.table_layout.focus()
+
+
+class CommitFilesView(View):
+    def __init__(self, screen, model):
+        super(CommitFilesView, self).__init__(model,
+                                              screen,
+                                              screen.height * 9 // 10,
+                                              screen.width * 9 // 10,
+                                              on_load=self._reload_list,
+                                              hover_focus=True,
+                                              can_scroll=False,
+                                              title="Diff Files")
+        self._model = model
+
+        # Create the form for displaying the list of branches.
+        self._list_view = ListBox(
+            Widget.FILL_FRAME,
+            model.list_files_in_current_commit(),
+            name="diff_files",
+            add_scroll_bar=True,
+            on_select=self.__view_diff)
+
+        self.add_navigation_header()
+        self.add_divider()
+
+        self.table_layout = Layout([100], fill_frame=True)
+        self.add_layout(self.table_layout)
+        self.table_layout.add_widget(self._list_view)
+
+        layout2 = Layout([1, 1, 1, 1])
+        self.add_layout(layout2)
+        layout2.add_widget(Button("Back", self._open_commits_view), 0)
+
+        self.table_layout.add_widget(Divider())
+
+        self.add_shortcut_panel()
+        self.fix()
+
+    def __view_diff(self):
+        self.save()
+        self._model.current_commit_file = self.data["diff_files"]
+        self.__open_commit_file_diff_scene()
+
+    @staticmethod
+    def __open_commit_file_diff_scene():
+        raise NextScene("View Commit Diff")
+
+    def _reload_list(self):
+        self._list_view.options = self._model.list_files_in_current_commit()
+        self.nav_header.blur()
+        self.table_layout.focus()
+
+
+class CommitFileDiffView(View):
+    def __init__(self, screen, model):
+        super(CommitFileDiffView, self).__init__(model,
+                                            screen,
+                                            screen.height * 9 // 10,
+                                            screen.width * 9 // 10,
+                                            hover_focus=True,
+                                            can_scroll=False,
+                                            title="Commit Diff",
+                                            reduce_cpu=True)
+        self._model = model
+        layout = Layout([100], fill_frame=True)
+        self.add_layout(layout)
+        self._header = TextBox(20, as_string=True)
+        self._header.disabled = True
+        self._header.custom_colour = "label"
+        layout.add_widget(self._header)
+        layout2 = Layout([1, 1, 1, 1])
+        self.add_layout(layout2)
+        layout2.add_widget(Button("Back", self._open_commits_view), 0)
+        self.fix()
+
+    def reset(self):
+        # Do standard reset to clear out form, then populate with new data.
+        super(CommitFileDiffView, self).reset()
+        self._header.value = self._model.current_file_diff()
 
 
 class WorkingCopyView(View):

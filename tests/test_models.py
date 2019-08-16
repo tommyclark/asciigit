@@ -3,6 +3,7 @@ import unittest
 from src.models import GitBranchModel, GitCommitModel, WorkingCopyModel
 from tests.fixtures import *
 
+
 class TestGitBranchModel(unittest.TestCase):
     def setUp(self):
         self.branch_model = GitBranchModel.__new__(GitBranchModel)
@@ -39,6 +40,7 @@ class TestCommitModel(unittest.TestCase):
     def setUp(self):
         self.commit_model = GitCommitModel.__new__(GitCommitModel)
         self.commit_model.repository_miner = MockRepositoryMiner()
+        self.commit_model.current_model = None
 
     def testListCommits(self):
         commits = self.commit_model.list_commits()
@@ -51,6 +53,20 @@ class TestCommitModel(unittest.TestCase):
         commit_with_info_list = [commit_info4, commit_info3, commit_info2, commit_info1]
 
         assert commits == commit_with_info_list
+
+    def testListFilesInCurrentCommit(self):
+        date = datetime(1999, 3, 3)
+        commit = MockRepositoryMinerCommit("hash1", "msg1", "name1", date)
+        self.commit_model.current_commit = commit
+        files = self.commit_model.list_files_in_current_commit()
+
+        assert files == [["test_path", commit.modifications[0]],
+                         ["alt_test_path", commit.modifications[1]]]
+
+    def testRetrievingCurrentDiff(self):
+        self.commit_model.current_commit_file = MockRepositoryMinerCommitModification()
+        modification = self.commit_model.current_file_diff()
+        assert modification == "test_diff"
 
 
 class TestWorkingCopyModel(unittest.TestCase):

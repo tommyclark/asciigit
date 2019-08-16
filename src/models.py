@@ -63,6 +63,8 @@ class GitCommitModel(GitModel):
     def __init__(self):
         super(GitCommitModel, self).__init__()
         self.repository_miner = RepositoryMining(self.dir_path)
+        self.current_commit = None
+        self.current_commit_file = None
 
     """
     A model for listing and manipulating git commits.
@@ -79,6 +81,19 @@ class GitCommitModel(GitModel):
             _commit_info_with_hash_as_key = [_commit_info, commit]
             _commits_with_info.append(_commit_info_with_hash_as_key)
         return _commits_with_info
+
+    def list_files_in_current_commit(self):
+        _file_map = []
+        if self.current_commit is not None:
+            for diff in self.current_commit.modifications:
+                _file_map.append([diff.new_path, diff])
+        return _file_map
+
+    def current_file_diff(self):
+        _diff = ""
+        if self.current_commit_file is not None:
+            _diff = self.current_commit_file.diff
+        return _diff
 
 
 class WorkingCopyModel(GitModel):

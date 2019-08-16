@@ -27,6 +27,8 @@ def main(screen, scene):
     scenes = [
         Scene([views.BranchListView(screen, branch_model)], -1, name="Main"),
         Scene([views.CommitView(screen, commit_model)], -1, name="Commits"),
+        Scene([views.CommitFilesView(screen, commit_model)], -1, name="View Commit Details"),
+        Scene([views.CommitFileDiffView(screen, commit_model)], -1, name="View Commit Diff"),
         Scene([views.WorkingCopyView(screen, working_copy_model)], -1, name="Working Copy"),
         Scene([views.ShortcutsView(screen)], -1, name="Shortcuts"),
         Scene([views.ExceptionView(screen, branch_model)], -1, name="Error")

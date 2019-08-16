@@ -206,4 +206,15 @@ class MockRepositoryMinerCommit:
         self.author = Developer(name, "")
         self.author.name = name
         self.author_date = date
+        self.modifications = [MockRepositoryMinerCommitModification(), MockRepositoryMinerCommitAltModification()]
 
+
+class MockRepositoryMinerCommitModification:
+    def __init__(self):
+        self.new_path = "test_path"
+        self.diff = "test_diff"
+
+
+class MockRepositoryMinerCommitAltModification:
+    def __init__(self):
+        self.new_path = "alt_test_path"
