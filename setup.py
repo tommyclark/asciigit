@@ -9,7 +9,7 @@ setup (
     long_description=long_description,
     long_description_content_type='text/markdown',
     url="https://github.com/tommyclark/asciigit",
-    version="0.0.6",
+    version="0.0.7",
     packages=find_packages(),
     tests_require=['mock'],
     install_requires=[
