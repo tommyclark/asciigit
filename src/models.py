@@ -1,7 +1,9 @@
 # coding: utf-8
 import os
-from git import Repo
+from git import Repo, InvalidGitRepositoryError
 from pydriller import RepositoryMining
+import sys
+from src.colour import Colour
 
 
 class GitModel(object):
@@ -12,9 +14,14 @@ class GitModel(object):
         # Current branch when editing.
         self.current_id = None
         self.last_error = None
-
         self.dir_path = os.getcwd()
-        self.repo = Repo(self.dir_path)
+
+        try:
+            self.repo = Repo(self.dir_path)
+        except InvalidGitRepositoryError:
+            sys.stderr.write(f"{Colour.ERROR} ERROR: This directory is not a git repository. {Colour.END_COLOUR}\n")
+            sys.exit(1)
+
         self.branches = self.repo.branches
         assert not self.repo.bare
 
