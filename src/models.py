@@ -102,6 +102,12 @@ class GitCommitModel(GitModel):
             _diff = self.current_commit_file.diff
         return _diff
 
+    def checkout_commit(self):
+        if self.current_commit is not None:
+            # self.repo.git.stash()
+            self.repo.git.checkout(self.current_commit.hash)
+            # self.repo.git.stash('pop')
+
 
 class WorkingCopyModel(GitModel):
     """

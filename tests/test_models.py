@@ -40,6 +40,7 @@ class TestCommitModel(unittest.TestCase):
     def setUp(self):
         self.commit_model = GitCommitModel.__new__(GitCommitModel)
         self.commit_model.repository_miner = MockRepositoryMiner()
+        self.commit_model.repo = MockRepository()
         self.commit_model.current_model = None
 
     def testListCommits(self):
@@ -55,8 +56,7 @@ class TestCommitModel(unittest.TestCase):
         assert commits == commit_with_info_list
 
     def testListFilesInCurrentCommit(self):
-        date = datetime(1999, 3, 3)
-        commit = MockRepositoryMinerCommit("hash1", "msg1", "name1", date)
+        commit = MockRepositoryMinerCommit("hash1", "msg1", "name1", datetime(1999, 3, 3))
         self.commit_model.current_commit = commit
         files = self.commit_model.list_files_in_current_commit()
 
@@ -67,6 +67,13 @@ class TestCommitModel(unittest.TestCase):
         self.commit_model.current_commit_file = MockRepositoryMinerCommitModification()
         modification = self.commit_model.current_file_diff()
         assert modification == "test_diff"
+
+    def testCheckout(self):
+        assert self.commit_model.repo.active_branch != 'hash1'
+        commit = MockRepositoryMinerCommit("hash1", "msg1", "name1", datetime(1999, 3, 3))
+        self.commit_model.current_commit = commit
+        self.commit_model.checkout_commit()
+        assert self.commit_model.repo.active_branch == 'hash1'
 
 
 class TestWorkingCopyModel(unittest.TestCase):

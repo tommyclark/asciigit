@@ -154,12 +154,49 @@ class CommitView(View):
 
     @staticmethod
     def __open_commit_details_scene():
-        raise NextScene("View Commit Details")
+        raise NextScene("Commit Options")
 
     def _reload_list(self):
         self._list_view.options = self._model.list_commits()
         self.nav_header.blur()
         self.table_layout.focus()
+
+
+class CommitOptionsView(View):
+    def __init__(self, screen, model):
+        super(CommitOptionsView, self).__init__(model,
+                                                screen,
+                                                screen.height * 6 // 10,
+                                                screen.width * 6 // 10,
+                                                hover_focus=True,
+                                                can_scroll=False,
+                                                title="Commit Options",
+                                                reduce_cpu=True)
+        self._model = model
+
+        layout = Layout([100], fill_frame=True)
+        self.add_layout(layout)
+        layout.add_widget(Button("View changes in commit..", self._view_changes), 0)
+        layout.add_widget(Button("Checkout commit..", self._checkout_commit), 0)
+        layout.add_widget(Button("Cancel", self._open_commits_view), 0)
+
+        self.fix()
+
+    def reset(self):
+        # Do standard reset to clear out form, then populate with new data.
+        super(CommitOptionsView, self).reset()
+
+    def _view_changes(self):
+        raise NextScene("View Commit Details")
+
+    def _checkout_commit(self):
+        try:
+            self._model.checkout_commit()
+            # self._open_commits_view()
+        except GitCommandError as e:
+            print(e)
+            self._model.last_error = e
+            raise NextScene("Error")
 
 
 class CommitFilesView(View):
@@ -216,13 +253,13 @@ class CommitFilesView(View):
 class CommitFileDiffView(View):
     def __init__(self, screen, model):
         super(CommitFileDiffView, self).__init__(model,
-                                            screen,
-                                            screen.height * 9 // 10,
-                                            screen.width * 9 // 10,
-                                            hover_focus=True,
-                                            can_scroll=False,
-                                            title="Commit Diff",
-                                            reduce_cpu=True)
+                                                 screen,
+                                                 screen.height * 9 // 10,
+                                                 screen.width * 9 // 10,
+                                                 hover_focus=True,
+                                                 can_scroll=False,
+                                                 title="Commit Diff",
+                                                 reduce_cpu=True)
         self._model = model
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
