@@ -158,7 +158,6 @@ class CommitView(View):
 
     def _reload_list(self):
         self._list_view.options = self._model.list_commits()
-        self.nav_header.blur()
         self.table_layout.focus()
 
 
