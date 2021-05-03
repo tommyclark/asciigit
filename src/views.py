@@ -59,6 +59,10 @@ class View(Frame):
         raise NextScene("Commits")
 
     @staticmethod
+    def _open_commits_files_view():
+        raise NextScene("View Commit Details")
+
+    @staticmethod
     def _open_working_copy_view():
         raise NextScene("Working Copy")
 
@@ -99,7 +103,7 @@ class BranchListView(View):
         self.fix()
 
     def _reload_list(self):
-        self.nav_header.blur()
+        #self.nav_header.blur()
         self.table_layout.focus()
         self._list_view.options = self._model.list_branches()
         self._list_view.value = self._model.get_current_branch()
@@ -158,6 +162,7 @@ class CommitView(View):
 
     def _reload_list(self):
         self._list_view.options = self._model.list_commits()
+        #self.nav_header.blur()
         self.table_layout.focus()
 
 
@@ -245,7 +250,7 @@ class CommitFilesView(View):
 
     def _reload_list(self):
         self._list_view.options = self._model.list_files_in_current_commit()
-        self.nav_header.blur()
+        #self.nav_header.blur()
         self.table_layout.focus()
 
 
@@ -268,7 +273,7 @@ class CommitFileDiffView(View):
         layout.add_widget(self._header)
         layout2 = Layout([1, 1, 1, 1])
         self.add_layout(layout2)
-        layout2.add_widget(Button("Back", self._open_commits_view), 0)
+        layout2.add_widget(Button("Back", self._open_commits_files_view), 0)
         self.fix()
 
     def reset(self):
@@ -341,7 +346,7 @@ class WorkingCopyView(View):
 
     def _reload_list(self):
         self._list_view.options = self._model.changed_files_for_table()
-        self.nav_header.blur()
+        #self.nav_header.blur()
         self.table_layout.focus()
 
 
