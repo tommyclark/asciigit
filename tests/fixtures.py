@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from git import Repo, Head, Diff, Commit, IndexFile
-from pydriller import RepositoryMining
+from pydriller import Repository
 from pydriller.domain.developer import Developer
 
 
@@ -186,7 +186,7 @@ class MockRepository(Repo):
         return self.mock_remote
 
 
-class MockRepositoryMiner(RepositoryMining):
+class MockRepositoryMiner(Repository):
     def __init__(self):
         pass
 

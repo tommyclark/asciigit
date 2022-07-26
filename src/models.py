@@ -1,7 +1,7 @@
 # coding: utf-8
 import os
 from git import Repo, InvalidGitRepositoryError
-from pydriller import RepositoryMining
+from pydriller import Repository
 import sys
 from src.colour import Colour
 
@@ -69,7 +69,7 @@ class GitBranchModel(GitModel):
 class GitCommitModel(GitModel):
     def __init__(self):
         super(GitCommitModel, self).__init__()
-        self.repository_miner = RepositoryMining(self.dir_path)
+        self.repository_miner = Repository(self.dir_path)
         self.current_commit = None
         self.current_commit_file = None
 
