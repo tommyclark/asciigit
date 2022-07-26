@@ -3,7 +3,6 @@ import unittest
 from src.models import GitBranchModel, GitCommitModel, WorkingCopyModel
 from tests.fixtures import *
 
-
 class TestGitBranchModel(unittest.TestCase):
     def setUp(self):
         self.branch_model = GitBranchModel.__new__(GitBranchModel)
