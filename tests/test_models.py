@@ -3,6 +3,7 @@ import unittest
 from src.models import GitBranchModel, GitCommitModel, WorkingCopyModel
 from tests.fixtures import *
 
+
 class TestGitBranchModel(unittest.TestCase):
     def setUp(self):
         self.branch_model = GitBranchModel.__new__(GitBranchModel)
@@ -15,7 +16,9 @@ class TestGitBranchModel(unittest.TestCase):
     def testIsActiveBranch(self):
         assert not (self.branch_model.is_current_branch(MockNonTrackingHead()))
         assert not (self.branch_model.is_current_branch(None))
-        assert self.branch_model.is_current_branch(self.branch_model.get_current_branch())
+        assert self.branch_model.is_current_branch(
+            self.branch_model.get_current_branch()
+        )
 
     def testCheckout(self):
         assert self.branch_model.is_current_branch(MockCurrentHead())
@@ -25,9 +28,9 @@ class TestGitBranchModel(unittest.TestCase):
     def testListBranches(self):
         self.branch_model.branches = self.branch_model.repo.branches
 
-        branch_1 = ['✔ sausage_branch -> sausage_branch', MockCurrentHead()]
-        branch_2 = ['  bacon_branch -> bacon_branch', MockAlternateHead()]
-        branch_3 = ['  not_tracking_branch', MockNonTrackingHead()]
+        branch_1 = ["✔ sausage_branch -> sausage_branch", MockCurrentHead()]
+        branch_2 = ["  bacon_branch -> bacon_branch", MockAlternateHead()]
+        branch_3 = ["  not_tracking_branch", MockNonTrackingHead()]
         expected_list = [branch_1, branch_2, branch_3]
 
         branches = self.branch_model.list_branches()
@@ -46,21 +49,37 @@ class TestCommitModel(unittest.TestCase):
         commits = self.commit_model.list_commits()
         assert commits is not None
 
-        commit_info1 = [['hash1', 'msg1', 'name1', '03/03/1999, 00:00:00'], commits[3][1]]
-        commit_info2 = [['hash2', 'msg2', 'name2', '03/03/1999, 00:00:00'], commits[2][1]]
-        commit_info3 = [['hash3', 'msg3', 'name3', '03/03/1999, 00:00:00'], commits[1][1]]
-        commit_info4 = [['hash4', 'msg4', 'name4', '03/03/1999, 00:00:00'], commits[0][1]]
+        commit_info1 = [
+            ["hash1", "msg1", "name1", "03/03/1999, 00:00:00"],
+            commits[3][1],
+        ]
+        commit_info2 = [
+            ["hash2", "msg2", "name2", "03/03/1999, 00:00:00"],
+            commits[2][1],
+        ]
+        commit_info3 = [
+            ["hash3", "msg3", "name3", "03/03/1999, 00:00:00"],
+            commits[1][1],
+        ]
+        commit_info4 = [
+            ["hash4", "msg4", "name4", "03/03/1999, 00:00:00"],
+            commits[0][1],
+        ]
         commit_with_info_list = [commit_info4, commit_info3, commit_info2, commit_info1]
 
         assert commits == commit_with_info_list
 
     def testListFilesInCurrentCommit(self):
-        commit = MockRepositoryMinerCommit("hash1", "msg1", "name1", datetime(1999, 3, 3))
+        commit = MockRepositoryMinerCommit(
+            "hash1", "msg1", "name1", datetime(1999, 3, 3)
+        )
         self.commit_model.current_commit = commit
         files = self.commit_model.list_files_in_current_commit()
 
-        assert files == [["test_path", commit.modifications[0]],
-                         ["alt_test_path", commit.modifications[1]]]
+        assert files == [
+            ["test_path", commit.modifications[0]],
+            ["alt_test_path", commit.modifications[1]],
+        ]
 
     def testRetrievingCurrentDiff(self):
         self.commit_model.current_commit_file = MockRepositoryMinerCommitModification()
@@ -68,11 +87,13 @@ class TestCommitModel(unittest.TestCase):
         assert modification == "test_diff"
 
     def testCheckout(self):
-        assert self.commit_model.repo.active_branch != 'hash1'
-        commit = MockRepositoryMinerCommit("hash1", "msg1", "name1", datetime(1999, 3, 3))
+        assert self.commit_model.repo.active_branch != "hash1"
+        commit = MockRepositoryMinerCommit(
+            "hash1", "msg1", "name1", datetime(1999, 3, 3)
+        )
         self.commit_model.current_commit = commit
         self.commit_model.checkout_commit()
-        assert self.commit_model.repo.active_branch == 'hash1'
+        assert self.commit_model.repo.active_branch == "hash1"
 
 
 class TestWorkingCopyModel(unittest.TestCase):
@@ -109,13 +130,20 @@ class TestWorkingCopyModel(unittest.TestCase):
         test_info = self.working_copy_model.changed_files_for_table()
 
         assert test_info is not None
-        changed_file1 = ['✔ test_1', 'test_1']
-        changed_file2 = ['✔ test_2', 'test_2']
-        changed_file3 = ['✔ test_3', 'test_3']
-        changed_file4 = ['  unadded_4', 'unadded_4']
-        changed_file5 = ['  unadded_5', 'unadded_5']
-        changed_file6 = ['  untracked_file', 'untracked_file']
-        changed_files = [changed_file1, changed_file2, changed_file3, changed_file4, changed_file5, changed_file6]
+        changed_file1 = ["✔ test_1", "test_1"]
+        changed_file2 = ["✔ test_2", "test_2"]
+        changed_file3 = ["✔ test_3", "test_3"]
+        changed_file4 = ["  unadded_4", "unadded_4"]
+        changed_file5 = ["  unadded_5", "unadded_5"]
+        changed_file6 = ["  untracked_file", "untracked_file"]
+        changed_files = [
+            changed_file1,
+            changed_file2,
+            changed_file3,
+            changed_file4,
+            changed_file5,
+            changed_file6,
+        ]
 
         assert changed_files == test_info
 

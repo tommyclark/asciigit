@@ -11,8 +11,7 @@ class MockDiff(Diff):
         self.a_path_attr = path
 
     def __eq__(self, other):
-        return self.b_path == other.b_path and\
-               self.a_path == other.a_path
+        return self.b_path == other.b_path and self.a_path == other.a_path
 
     @property
     def b_path(self):
@@ -23,31 +22,56 @@ class MockDiff(Diff):
         return self.a_path_attr
 
     @property
-    def a_mode(self): return None
+    def a_mode(self):
+        return None
+
     @property
-    def a_blob(self): return None
+    def a_blob(self):
+        return None
+
     @property
-    def a_rawpath(self): return None
+    def a_rawpath(self):
+        return None
+
     @property
-    def b_mode(self): return None
+    def b_mode(self):
+        return None
+
     @property
-    def b_blob(self): return None
+    def b_blob(self):
+        return None
+
     @property
-    def b_rawpath(self): return None
+    def b_rawpath(self):
+        return None
+
     @property
-    def new_file(self): return None
+    def new_file(self):
+        return None
+
     @property
-    def deleted_file(self): return None
+    def deleted_file(self):
+        return None
+
     @property
-    def raw_rename_from(self): return None
+    def raw_rename_from(self):
+        return None
+
     @property
-    def raw_rename_to(self): return None
+    def raw_rename_to(self):
+        return None
+
     @property
-    def diff(self): return None
+    def diff(self):
+        return None
+
     @property
-    def change_type(self): return None
+    def change_type(self):
+        return None
+
     @property
-    def score(self): return None
+    def score(self):
+        return None
 
 
 class MockCommit(Commit):
@@ -62,7 +86,7 @@ class MockCommit(Commit):
             diff4 = MockDiff("unadded_4")
             diff5 = MockDiff("unadded_5")
             return [diff1, diff2, diff3, diff4, diff5]
-        elif other is 'HEAD':
+        elif other is "HEAD":
             diff1 = MockDiff("test_1")
             diff2 = MockDiff("test_2")
             diff3 = MockDiff("test_3")
@@ -153,7 +177,7 @@ class MockIndex(IndexFile):
             diff4 = MockDiff("unadded_4")
             diff5 = MockDiff("unadded_5")
             return [diff4, diff5]
-        elif other is 'HEAD':
+        elif other is "HEAD":
             diff1 = MockDiff("test_1")
             diff2 = MockDiff("test_2")
             diff3 = MockDiff("test_3")
@@ -182,7 +206,7 @@ class MockRepository(Repo):
         self.git = MockGit(self)
         self.mock_remote = MockRemote()
 
-    def remote(self, name='origin'):
+    def remote(self, name="origin"):
         return self.mock_remote
 
 
@@ -206,7 +230,10 @@ class MockRepositoryMinerCommit:
         self.author = Developer(name, "")
         self.author.name = name
         self.author_date = date
-        self.modifications = [MockRepositoryMinerCommitModification(), MockRepositoryMinerCommitAltModification()]
+        self.modifications = [
+            MockRepositoryMinerCommitModification(),
+            MockRepositoryMinerCommitAltModification(),
+        ]
 
 
 class MockRepositoryMinerCommitModification:

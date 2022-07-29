@@ -1,29 +1,55 @@
-from asciimatics.widgets import Frame, ListBox, Layout, Divider, Text, \
-    Button, TextBox, Widget, MultiColumnListBox
+from asciimatics.widgets import (
+    Frame,
+    ListBox,
+    Layout,
+    Divider,
+    Text,
+    Button,
+    TextBox,
+    Widget,
+    MultiColumnListBox,
+)
 from asciimatics.exceptions import NextScene, StopApplication
 from git import GitCommandError
 
 
 class View(Frame):
-    def __init__(self, model, screen, height, width, data=None, on_load=None,
-                 has_border=True, hover_focus=False, name=None, title=None,
-                 x=None, y=None, has_shadow=False, reduce_cpu=False, is_modal=False,
-                 can_scroll=True):
-        super(View, self).__init__(screen=screen,
-                                   height=height,
-                                   width=width,
-                                   data=data,
-                                   on_load=on_load,
-                                   has_border=has_border,
-                                   hover_focus=hover_focus,
-                                   name=name,
-                                   title=title,
-                                   x=x,
-                                   y=y,
-                                   has_shadow=has_shadow,
-                                   reduce_cpu=reduce_cpu,
-                                   is_modal=is_modal,
-                                   can_scroll=can_scroll)
+    def __init__(
+        self,
+        model,
+        screen,
+        height,
+        width,
+        data=None,
+        on_load=None,
+        has_border=True,
+        hover_focus=False,
+        name=None,
+        title=None,
+        x=None,
+        y=None,
+        has_shadow=False,
+        reduce_cpu=False,
+        is_modal=False,
+        can_scroll=True,
+    ):
+        super(View, self).__init__(
+            screen=screen,
+            height=height,
+            width=width,
+            data=data,
+            on_load=on_load,
+            has_border=has_border,
+            hover_focus=hover_focus,
+            name=name,
+            title=title,
+            x=x,
+            y=y,
+            has_shadow=has_shadow,
+            reduce_cpu=reduce_cpu,
+            is_modal=is_modal,
+            can_scroll=can_scroll,
+        )
         self._model = model
         self.nav_header = None
         self.set_theme("tlj256")
@@ -73,14 +99,16 @@ class View(Frame):
 
 class BranchListView(View):
     def __init__(self, screen, model):
-        super(BranchListView, self).__init__(model,
-                                             screen,
-                                             screen.height * 9 // 10,
-                                             screen.width * 9 // 10,
-                                             on_load=self._reload_list,
-                                             hover_focus=True,
-                                             can_scroll=False,
-                                             title="Branches")
+        super(BranchListView, self).__init__(
+            model,
+            screen,
+            screen.height * 9 // 10,
+            screen.width * 9 // 10,
+            on_load=self._reload_list,
+            hover_focus=True,
+            can_scroll=False,
+            title="Branches",
+        )
         self._model = model
 
         # Create the form for displaying the list of branches.
@@ -89,7 +117,8 @@ class BranchListView(View):
             model.list_branches(),
             name="branches",
             add_scroll_bar=True,
-            on_select=self.__checkout)
+            on_select=self.__checkout,
+        )
 
         self.add_navigation_header()
         self.add_divider()
@@ -103,7 +132,7 @@ class BranchListView(View):
         self.fix()
 
     def _reload_list(self):
-        #self.nav_header.blur()
+        # self.nav_header.blur()
         self.table_layout.focus()
         self._list_view.options = self._model.list_branches()
         self._list_view.value = self._model.get_current_branch()
@@ -121,14 +150,16 @@ class BranchListView(View):
 
 class CommitView(View):
     def __init__(self, screen, model):
-        super(CommitView, self).__init__(model,
-                                         screen,
-                                         screen.height * 9 // 10,
-                                         screen.width * 9 // 10,
-                                         on_load=self._reload_list,
-                                         hover_focus=True,
-                                         can_scroll=False,
-                                         title="Commits")
+        super(CommitView, self).__init__(
+            model,
+            screen,
+            screen.height * 9 // 10,
+            screen.width * 9 // 10,
+            on_load=self._reload_list,
+            hover_focus=True,
+            can_scroll=False,
+            title="Commits",
+        )
         self._model = model
 
         self._list_view = MultiColumnListBox(
@@ -138,7 +169,8 @@ class CommitView(View):
             titles=["Hash", "Message", "Author", "Date"],
             name="commits",
             add_scroll_bar=True,
-            on_select=self.__view_diff)
+            on_select=self.__view_diff,
+        )
 
         self.add_navigation_header()
         self.add_divider()
@@ -162,20 +194,22 @@ class CommitView(View):
 
     def _reload_list(self):
         self._list_view.options = self._model.list_commits()
-        #self.nav_header.blur()
+        # self.nav_header.blur()
         self.table_layout.focus()
 
 
 class CommitOptionsView(View):
     def __init__(self, screen, model):
-        super(CommitOptionsView, self).__init__(model,
-                                                screen,
-                                                screen.height * 6 // 10,
-                                                screen.width * 6 // 10,
-                                                hover_focus=True,
-                                                can_scroll=False,
-                                                title="Commit Options",
-                                                reduce_cpu=True)
+        super(CommitOptionsView, self).__init__(
+            model,
+            screen,
+            screen.height * 6 // 10,
+            screen.width * 6 // 10,
+            hover_focus=True,
+            can_scroll=False,
+            title="Commit Options",
+            reduce_cpu=True,
+        )
         self._model = model
 
         layout = Layout([100], fill_frame=True)
@@ -205,14 +239,16 @@ class CommitOptionsView(View):
 
 class CommitFilesView(View):
     def __init__(self, screen, model):
-        super(CommitFilesView, self).__init__(model,
-                                              screen,
-                                              screen.height * 9 // 10,
-                                              screen.width * 9 // 10,
-                                              on_load=self._reload_list,
-                                              hover_focus=True,
-                                              can_scroll=False,
-                                              title="Diff Files")
+        super(CommitFilesView, self).__init__(
+            model,
+            screen,
+            screen.height * 9 // 10,
+            screen.width * 9 // 10,
+            on_load=self._reload_list,
+            hover_focus=True,
+            can_scroll=False,
+            title="Diff Files",
+        )
         self._model = model
 
         # Create the form for displaying the list of branches.
@@ -221,7 +257,8 @@ class CommitFilesView(View):
             model.list_files_in_current_commit(),
             name="diff_files",
             add_scroll_bar=True,
-            on_select=self.__view_diff)
+            on_select=self.__view_diff,
+        )
 
         self.add_navigation_header()
         self.add_divider()
@@ -250,20 +287,22 @@ class CommitFilesView(View):
 
     def _reload_list(self):
         self._list_view.options = self._model.list_files_in_current_commit()
-        #self.nav_header.blur()
+        # self.nav_header.blur()
         self.table_layout.focus()
 
 
 class CommitFileDiffView(View):
     def __init__(self, screen, model):
-        super(CommitFileDiffView, self).__init__(model,
-                                                 screen,
-                                                 screen.height * 9 // 10,
-                                                 screen.width * 9 // 10,
-                                                 hover_focus=True,
-                                                 can_scroll=False,
-                                                 title="Commit Diff",
-                                                 reduce_cpu=True)
+        super(CommitFileDiffView, self).__init__(
+            model,
+            screen,
+            screen.height * 9 // 10,
+            screen.width * 9 // 10,
+            hover_focus=True,
+            can_scroll=False,
+            title="Commit Diff",
+            reduce_cpu=True,
+        )
         self._model = model
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
@@ -284,14 +323,16 @@ class CommitFileDiffView(View):
 
 class WorkingCopyView(View):
     def __init__(self, screen, model):
-        super(WorkingCopyView, self).__init__(model,
-                                              screen,
-                                              screen.height * 9 // 10,
-                                              screen.width * 9 // 10,
-                                              on_load=self._reload_list,
-                                              hover_focus=True,
-                                              can_scroll=False,
-                                              title="Working copy")
+        super(WorkingCopyView, self).__init__(
+            model,
+            screen,
+            screen.height * 9 // 10,
+            screen.width * 9 // 10,
+            on_load=self._reload_list,
+            hover_focus=True,
+            can_scroll=False,
+            title="Working copy",
+        )
         self._model = model
         screen.catch_interrupt = True
 
@@ -300,7 +341,8 @@ class WorkingCopyView(View):
             model.changed_files_for_table(),
             name="working_copy",
             add_scroll_bar=True,
-            on_select=self._add_to_index)
+            on_select=self._add_to_index,
+        )
 
         self.add_navigation_header()
         self.add_divider()
@@ -346,20 +388,22 @@ class WorkingCopyView(View):
 
     def _reload_list(self):
         self._list_view.options = self._model.changed_files_for_table()
-        #self.nav_header.blur()
+        # self.nav_header.blur()
         self.table_layout.focus()
 
 
 class ExceptionView(View):
     def __init__(self, screen, model):
-        super(ExceptionView, self).__init__(model,
-                                            screen,
-                                            screen.height * 9 // 10,
-                                            screen.width * 9 // 10,
-                                            hover_focus=True,
-                                            can_scroll=False,
-                                            title="Error",
-                                            reduce_cpu=True)
+        super(ExceptionView, self).__init__(
+            model,
+            screen,
+            screen.height * 9 // 10,
+            screen.width * 9 // 10,
+            hover_focus=True,
+            can_scroll=False,
+            title="Error",
+            reduce_cpu=True,
+        )
         self._model = model
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
@@ -387,26 +431,28 @@ class ExceptionView(View):
 
 class ShortcutsView(Frame):
     def __init__(self, screen):
-        super(ShortcutsView, self).__init__(screen,
-                                            screen.height * 6 // 10,
-                                            screen.width * 6 // 10,
-                                            hover_focus=True,
-                                            can_scroll=False,
-                                            title="Shortcuts",
-                                            reduce_cpu=True)
+        super(ShortcutsView, self).__init__(
+            screen,
+            screen.height * 6 // 10,
+            screen.width * 6 // 10,
+            hover_focus=True,
+            can_scroll=False,
+            title="Shortcuts",
+            reduce_cpu=True,
+        )
         self.set_theme("tlj256")
 
         layout = Layout([100, 100], fill_frame=True)
         self.add_layout(layout)
         self._row0 = TextBox(20, as_string=True)
         self._row0.disabled = True
-        self._row0.value = "F1 - See branch window\n" \
-                           "Ctrl-A - See shortcuts window"
+        self._row0.value = "F1 - See branch window\n" "Ctrl-A - See shortcuts window"
         layout.add_widget(self._row0, 0)
         self._row1 = TextBox(20, as_string=True)
         self._row1.disabled = True
-        self._row1.value = "F2 - See commit list window\n" \
-                           "F3 - See working copy and commit window"
+        self._row1.value = (
+            "F2 - See commit list window\n" "F3 - See working copy and commit window"
+        )
         layout.add_widget(self._row1, 1)
         layout2 = Layout([1, 1])
         self.add_layout(layout2)

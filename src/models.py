@@ -10,6 +10,7 @@ class GitModel(object):
     """
     Parent class for all Git models.
     """
+
     def __init__(self):
         # Current branch when editing.
         self.current_id = None
@@ -19,7 +20,9 @@ class GitModel(object):
         try:
             self.repo = Repo(self.dir_path)
         except InvalidGitRepositoryError:
-            sys.stderr.write(f"{Colour.ERROR} ERROR: This directory is not a git repository. {Colour.END_COLOUR}\n")
+            sys.stderr.write(
+                f"{Colour.ERROR} ERROR: This directory is not a git repository. {Colour.END_COLOUR}\n"
+            )
             sys.exit(1)
 
         self.branches = self.repo.branches
@@ -30,6 +33,7 @@ class GitBranchModel(GitModel):
     """
     Model for listing and manipulating Git branches.
     """
+
     def list_branches(self):
         """
         Lists branches for Branches table. Prepends the current branch with a tick.
@@ -76,6 +80,7 @@ class GitCommitModel(GitModel):
     """
     A model for listing and manipulating git commits.
     """
+
     def list_commits(self):
         """
         Lists commits for the current branch for the commits table.
@@ -83,8 +88,12 @@ class GitCommitModel(GitModel):
         """
         _commits_with_info = []
         for commit in reversed(list(self.repository_miner.traverse_commits())):
-            _commit_info = [commit.hash[:12], commit.msg, commit.author.name,
-                            commit.author_date.strftime("%d/%m/%Y, %H:%M:%S")]
+            _commit_info = [
+                commit.hash[:12],
+                commit.msg,
+                commit.author.name,
+                commit.author_date.strftime("%d/%m/%Y, %H:%M:%S"),
+            ]
             _commit_info_with_hash_as_key = [_commit_info, commit]
             _commits_with_info.append(_commit_info_with_hash_as_key)
         return _commits_with_info
@@ -113,6 +122,7 @@ class WorkingCopyModel(GitModel):
     """
     A model for viewing working copy file changes.
     """
+
     def list_of_changed_files(self):
         return self.repo.head.commit.diff(None)
 
@@ -120,7 +130,7 @@ class WorkingCopyModel(GitModel):
         return self.repo.index.diff(None)
 
     def list_of_changed_files_in_index(self):
-        return self.repo.index.diff('HEAD')
+        return self.repo.index.diff("HEAD")
 
     def changed_files_for_table(self):
         """
@@ -147,8 +157,8 @@ class WorkingCopyModel(GitModel):
             self.repo.git.add(path)
 
     def commit(self, commit_message):
-        self.repo.git.commit('-m {}'.format(commit_message))
+        self.repo.git.commit("-m {}".format(commit_message))
 
     def push(self):
-        origin = self.repo.remote(name='origin')
+        origin = self.repo.remote(name="origin")
         origin.push()
