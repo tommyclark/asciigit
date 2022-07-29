@@ -4,7 +4,8 @@ python:
 - '3.7'
 - '3.8'
 install:
-- pip install -U importlib_metadata
+- pip install -U importlib_metadata black
+- black --check .
 - pip install .
 script: pytest
 deploy:
