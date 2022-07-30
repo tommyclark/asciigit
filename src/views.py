@@ -12,6 +12,8 @@ from asciimatics.widgets import (
 from asciimatics.exceptions import NextScene, StopApplication
 from git import GitCommandError
 
+last_error = None
+
 
 class View(Frame):
     def __init__(
@@ -142,7 +144,8 @@ class BranchListView(View):
         try:
             self._model.checkout_branch(self.data["branches"])
         except GitCommandError as e:
-            self._model.last_error = e
+            global last_error
+            last_error = e
             raise NextScene("Error")
         self._model.current_id = self.data["branches"]
         self._reload_list()
@@ -232,8 +235,8 @@ class CommitOptionsView(View):
             self._model.checkout_commit()
             # self._open_commits_view()
         except GitCommandError as e:
-            print(e)
-            self._model.last_error = e
+            global last_error
+            last_error = e
             raise NextScene("Error")
 
 
@@ -378,8 +381,13 @@ class WorkingCopyView(View):
         self.reset()
 
     def _push(self):
-        self._model.push()
-        self.reset()
+        try:
+            self._model.push()
+            self.reset()
+        except GitCommandError as e:
+            global last_error
+            last_error = e
+            raise NextScene("Error")
 
     def reset(self):
         # Do standard reset to clear out form, then populate with new data.
@@ -419,7 +427,7 @@ class ExceptionView(View):
     def reset(self):
         # Do standard reset to clear out form, then populate with new data.
         super(ExceptionView, self).reset()
-        self._header.value = "Error encountered: {0}".format(self._model.last_error)
+        self._header.value = "Error encountered: {0}".format(last_error)
 
     def _ok(self):
         raise NextScene("Main")
