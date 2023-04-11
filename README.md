@@ -40,5 +40,4 @@ View the commit history of your current branch.
 Select the files you want to commit by hitting enter on them,
 and then enter a commit message and commit and push at the bottom
 of the window.
-![terminal git client working copy screenshot](assets/working-copy.png "Asciigit working copy window")
-
+![terminal git client working copy screenshot](assets/working-copy.png "Asciigit working copy window") 
